@@ -12,13 +12,15 @@ public:
   explicit Graph(AdjazenzMatrix adjazenzMatrix) noexcept
       : adj_matrix(std::move(adjazenzMatrix)) {}
 
-  [[nodiscard]] auto size() noexcept -> size_t { return adj_matrix.size(); }
+  [[nodiscard]] auto size() const noexcept -> size_t {
+    return adj_matrix.size();
+  }
 
-  [[nodiscard]] auto operator[](size_t node_index) noexcept -> Node {
+  [[nodiscard]] auto operator[](size_t node_index) const noexcept -> Node {
     return Node(node_index);
   }
 
-  [[nodiscard]] auto node_neighbors(Node const &node) noexcept
+  [[nodiscard]] auto node_neighbors(Node const &node) const noexcept
       -> std::vector<Node> {
     auto result = std::vector<Node>();
     assert(node >= 0 && node < adj_matrix.size() &&

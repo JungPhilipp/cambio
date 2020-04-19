@@ -24,6 +24,7 @@ TEST_CASE("Graph"){
     auto found_nodes = breath_first_search(graph, graph[0], predicate);
     REQUIRE(found_nodes.size() == 0);
     auto predicate1 = [](Node const& node, std::vector<Node> const& neighbors){return neighbors.size() == 2;};
+    found_nodes = breath_first_search(graph, graph[0], predicate1);
     REQUIRE(found_nodes.size() == 2);
     REQUIRE(found_nodes == std::vector<Node>{1,2});
   }
