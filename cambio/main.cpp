@@ -6,10 +6,11 @@
 #include <tuple>
 
 enum Field : unsigned{
-    EMPTY,
-    RED,
-    BLUE
+  EMPTY,
+  RED,
+  BLUE
 };
+
 using Board = std::array<Field, 12>;
 using Index = unsigned int;
 using AdjMatrix = std::array<std::vector<Index>, 12>;

@@ -13,10 +13,10 @@ TEST_CASE("Graph"){
   SUBCASE("neighbors"){
     auto first_node = graph[0];
     auto neighbors = graph.node_neighbors(first_node);
-    REQUIRE(neighbors == std::vector<Node>{1,2,3});
+    REQUIRE(neighbors == std::vector{Node{1},Node{2},Node{3}});
     auto second_node = graph[1];
     neighbors = graph.node_neighbors(second_node);
-    REQUIRE(neighbors == std::vector<Node>{0u,3u});
+    REQUIRE(neighbors == std::vector{Node{0},Node{3}});
   }
 
   SUBCASE("breath_first_search"){
@@ -26,6 +26,6 @@ TEST_CASE("Graph"){
     auto predicate1 = [](Node const& node, std::vector<Node> const& neighbors){return neighbors.size() == 2;};
     found_nodes = breath_first_search(graph, graph[0], predicate1);
     REQUIRE(found_nodes.size() == 2);
-    REQUIRE(found_nodes == std::vector<Node>{1,2});
+    REQUIRE(found_nodes == std::vector{Node{1},Node{2}});
   }
 }
