@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
-#include <assert.h>
+#include <cassert>
 #include <queue>
 #include <tuple>
 
