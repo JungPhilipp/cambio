@@ -3,8 +3,11 @@
 #include <type_traits>
 #include <vector>
 #include <iostream>
+#include <string>
+#include <optional>
 
 #include <graph/Node.h>
+#include <graph/move.h>
 
 namespace graph {
 
@@ -32,7 +35,20 @@ public:
   }
 
   [[nodiscard]] auto operator[](size_t node_index) const noexcept -> Node {
-    return Node(node_index);
+    return nodes[node_index];
+  }
+
+  [[nodiscard]] auto operator== (Graph const& other) const noexcept -> bool{
+    if (not (adj_matrix == other.adj_matrix ))
+      return false;
+    for (auto i = 0; i < nodes.size(); i++){
+      if (not (nodes[i].field == other.nodes[i].field))
+        return false;
+    }
+    return true;
+  }
+  [[nodiscard]] auto operator!= (Graph const& other) const noexcept -> bool{
+    return not operator==(other);
   }
 
   [[nodiscard]] auto node_neighbors(Node const &node) const noexcept
@@ -47,6 +63,22 @@ public:
                    [](auto node_index) { return Node(node_index); });
     return result;
   }
+
+  [[nodiscard]] auto invalid_move(move::Move const& move) noexcept -> std::optional<std::string>{
+    if(nodes[move.source].field == Field::EMPTY)
+        return {"ILLEGAL MOVE: The source field is empty"};
+    if(nodes[move.destination].field != Field::EMPTY)
+      return {"ILLEGAL MOVE: The destination field is emtpy"};
+    return {};
+  }
+
+  auto do_move(move::Move const& move) noexcept -> void{
+    auto invalid = invalid_move(move);
+    assert(not invalid);
+    nodes[move.destination].field = nodes[move.source].field;
+    nodes[move.source].field = Field::EMPTY;
+  }
+
   /// Extremely basic, only for current test problem
   auto print() const noexcept -> void {
     assert(size() == 12);
