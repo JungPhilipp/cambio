@@ -34,7 +34,6 @@ TEST_CASE("Graph") {
   }
 
   SUBCASE("breath_first_search") {
-    graph.print();
     auto always_true = [](Node const &node) {
       return true;
     };
@@ -51,7 +50,18 @@ TEST_CASE("Graph") {
     REQUIRE_FALSE(breath_first_search(graph, 1, 5, no_jumps));
     REQUIRE_FALSE(breath_first_search(graph, 6, 3, no_jumps));
     REQUIRE_FALSE(breath_first_search(graph, 0, 11, no_jumps));
-
+    graph.do_move({2,5});
+    REQUIRE_FALSE(breath_first_search(graph, 1, 5, no_jumps));
+    REQUIRE_FALSE(breath_first_search(graph, 1, 7, no_jumps));
+    REQUIRE_FALSE(breath_first_search(graph, 1, 6, no_jumps));
+    REQUIRE_FALSE(breath_first_search(graph, 8, 6, no_jumps));
+    REQUIRE_FALSE(breath_first_search(graph, 8, 5, no_jumps));
+    REQUIRE(breath_first_search(graph, 1, 4, no_jumps));
+    REQUIRE(breath_first_search(graph, 3, 4, no_jumps));
+    REQUIRE(breath_first_search(graph, 5, 4, no_jumps));
+    REQUIRE(breath_first_search(graph, 5, 6, no_jumps));
+    REQUIRE(breath_first_search(graph, 5, 7, no_jumps));
+    REQUIRE(breath_first_search(graph, 8, 7, no_jumps));
   }
 
   SUBCASE("Print") {
