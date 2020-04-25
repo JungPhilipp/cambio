@@ -66,20 +66,20 @@ private:
   std::vector<Node> nodes;
 };
 
-[[nodiscard]] AdjazenzMatrix example_01() noexcept {
-  return {std::vector<size_t>{1u},
-          std::vector<size_t>{0u, 2u},
-          std::vector<size_t>{1u, 3u, 4u},
-          std::vector<size_t>{2u},
-          std::vector<size_t>{2u, 5u},
-          std::vector<size_t>{4u, 6u, 7u},
-          std::vector<size_t>{5u},
-          std::vector<size_t>{5u, 8u},
-          std::vector<size_t>{7u, 9u, 10u},
-          std::vector<size_t>{8u},
-          std::vector<size_t>{8u, 11u},
-          std::vector<size_t>{10u}
-  };
-
+namespace example_01{
+[[nodiscard]] auto adj_matrix() noexcept -> AdjazenzMatrix {
+  return {std::vector<size_t>{1u},          std::vector<size_t>{0u, 2u},
+          std::vector<size_t>{1u, 3u, 4u},  std::vector<size_t>{2u},
+          std::vector<size_t>{2u, 5u},      std::vector<size_t>{4u, 6u, 7u},
+          std::vector<size_t>{5u},          std::vector<size_t>{5u, 8u},
+          std::vector<size_t>{7u, 9u, 10u}, std::vector<size_t>{8u},
+          std::vector<size_t>{8u, 11u},     std::vector<size_t>{10u}};
+}
+[[nodiscard]] auto initial_positions_red() noexcept -> std::vector<size_t>{
+  return {0,1,2,3};
+}
+[[nodiscard]] auto initial_positions_blue() noexcept -> std::vector<size_t>{
+  return {8,9,10,11};
+}
 }
 } // namespace graph
