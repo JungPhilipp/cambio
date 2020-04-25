@@ -29,3 +29,9 @@ TEST_CASE("Graph"){
     REQUIRE(found_nodes == std::vector{Node{1},Node{2}});
   }
 }
+
+TEST_CASE("Print"){
+  auto adj_matrix = graph::example_01();
+  auto graph = Graph(adj_matrix);
+  graph.print();
+}

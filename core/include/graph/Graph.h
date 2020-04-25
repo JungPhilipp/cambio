@@ -2,6 +2,7 @@
 #include <cassert>
 #include <type_traits>
 #include <vector>
+#include <iostream>
 
 #include <graph/Node.h>
 
@@ -11,8 +12,20 @@ using AdjazenzMatrix = std::vector<std::vector<size_t>>;
 
 class Graph {
 public:
-  explicit Graph(AdjazenzMatrix adjazenzMatrix) noexcept
-      : adj_matrix(std::move(adjazenzMatrix)) {}
+  explicit Graph(AdjazenzMatrix adjazenzMatrix,
+                 std::vector<size_t> positions_red = {},
+                 std::vector<size_t> positions_blue = {}) noexcept
+      : adj_matrix(std::move(adjazenzMatrix)) {
+    nodes.reserve(adj_matrix.size());
+    for (auto i = 0; i < adj_matrix.size(); ++i){
+      if (std::find(begin(positions_red), end(positions_red), i) != end(positions_red))
+        nodes.emplace_back(i, Field::RED);
+      else if (std::find(begin(positions_blue), end(positions_blue), i) != end(positions_blue))
+        nodes.emplace_back(i, Field::BLUE);
+      else
+        nodes.emplace_back(i);
+    }
+  }
 
   [[nodiscard]] auto size() const noexcept -> size_t {
     return adj_matrix.size();
@@ -34,8 +47,39 @@ public:
                    [](auto node_index) { return Node(node_index); });
     return result;
   }
+  /// Extremely basic, only for current test problem
+  auto print() const noexcept -> void {
+    assert(size() == 12);
+    std::cout << "      " << nodes[3] << "           " << nodes[9] << "\n";
+    std::cout << "      |           |\n";
+    for(auto i : {0,1,2,4,5,7,8,10,11}) {
+      std::cout << nodes[i];
+      if (i != 11)
+        std::cout << "--";
+    }
+    std::cout<< "\n            |" << std::endl;
+    std::cout<< "            " << nodes[6] << std::endl;
+  }
 
 private:
   AdjazenzMatrix adj_matrix;
+  std::vector<Node> nodes;
 };
+
+[[nodiscard]] AdjazenzMatrix example_01() noexcept {
+  return {std::vector<size_t>{1u},
+          std::vector<size_t>{0u, 2u},
+          std::vector<size_t>{1u, 3u, 4u},
+          std::vector<size_t>{2u},
+          std::vector<size_t>{2u, 5u},
+          std::vector<size_t>{4u, 6u, 7u},
+          std::vector<size_t>{5u},
+          std::vector<size_t>{5u, 8u},
+          std::vector<size_t>{7u, 9u, 10u},
+          std::vector<size_t>{8u},
+          std::vector<size_t>{8u, 11u},
+          std::vector<size_t>{10u}
+  };
+
+}
 } // namespace graph
