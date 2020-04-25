@@ -1,9 +1,11 @@
 #include <doctest.h>
 #include <graph/Graph.h>
+#include <graph/move.h>
 
 #include <graph/breath_first_search.h>
 
 using namespace graph;
+using namespace move;
 
 
 TEST_CASE("Graph"){
@@ -31,7 +33,26 @@ TEST_CASE("Graph"){
 }
 
 TEST_CASE("Print"){
-  auto adj_matrix = graph::example_01();
+  auto adj_matrix = example_01::adj_matrix();
   auto graph = Graph(adj_matrix);
   graph.print();
+}
+
+TEST_CASE("Move"){
+  auto adj_matrix = example_01::adj_matrix();
+  auto initial_positions_red = example_01::initial_positions_red();
+  auto initial_positions_blue = example_01::initial_positions_blue();
+  auto graph = Graph(adj_matrix, initial_positions_red, initial_positions_blue);
+  graph.print();
+
+  SUBCASE("Move is_inverse"){
+    static_assert(Move{10,10}.is_inverse({10,10}));
+    static_assert(Move{10,20}.is_inverse({20,10}));
+    static_assert(Move{20,10}.is_inverse({10,20}));
+    static_assert(not Move{20,10}.is_inverse({30,20}));
+  }
+  SUBCASE("Move equality") {
+    static_assert(Move{10, 10} == Move{10, 10});
+    static_assert(Move{1, 10} != Move{10, 10});
+  }
 }
