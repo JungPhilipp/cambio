@@ -23,7 +23,7 @@ namespace {
     return std::string ("\033[1;31mo\033[0m");
   }
   [[nodiscard]] auto blue() noexcept -> std::string{
-    return std::string ("\034[1;31mo\034[0m");
+    return std::string ("\033[1;34mo\033[0m");
   }
   [[nodiscard]] auto white() noexcept -> std::string{
     return std::string ("o");
