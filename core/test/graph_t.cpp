@@ -31,23 +31,29 @@ TEST_CASE("Graph") {
     auto second_node = graph[1];
     neighbors = graph.node_neighbors(second_node);
     REQUIRE(neighbors == std::vector{Node{0}, Node{3}});
-
-    SUBCASE("breath_first_search") {
-      auto predicate = [](Node const &node,
-                          std::vector<Node> const &neighbors) {
-        return neighbors.size() == 1;
-      };
-      auto found_nodes = breath_first_search(graph, graph[0], predicate);
-      REQUIRE(found_nodes.size() == 0);
-      auto predicate1 = [](Node const &node,
-                           std::vector<Node> const &neighbors) {
-        return neighbors.size() == 2;
-      };
-      found_nodes = breath_first_search(graph, graph[0], predicate1);
-      REQUIRE(found_nodes.size() == 2);
-      REQUIRE(found_nodes == std::vector{Node{1}, Node{2}});
-    }
   }
+
+  SUBCASE("breath_first_search") {
+    graph.print();
+    auto always_true = [](Node const &node) {
+      return true;
+    };
+    REQUIRE(breath_first_search(graph, 0, 11, always_true));
+    REQUIRE(breath_first_search(graph, 6, 9, always_true));
+    auto no_jumps = [](Node const &node) {
+      return node.field == Field::EMPTY;
+    };
+    REQUIRE(breath_first_search(graph, 2, 6, no_jumps));
+    REQUIRE(breath_first_search(graph, 6, 7, no_jumps));
+    REQUIRE(breath_first_search(graph, 7, 4, no_jumps));
+    REQUIRE_FALSE(breath_first_search(graph, 4, 8, no_jumps));
+    REQUIRE_FALSE(breath_first_search(graph, 6, 10, no_jumps));
+    REQUIRE_FALSE(breath_first_search(graph, 1, 5, no_jumps));
+    REQUIRE_FALSE(breath_first_search(graph, 6, 3, no_jumps));
+    REQUIRE_FALSE(breath_first_search(graph, 0, 11, no_jumps));
+
+  }
+
   SUBCASE("Print") {
     graph.print();
   }
@@ -75,15 +81,16 @@ TEST_CASE("Graph") {
       REQUIRE_FALSE(graph.invalid_move({8,6}).has_value());
       REQUIRE_FALSE(graph.invalid_move({2,7}).has_value());
     }
-    SUBCASE("Do Move"){
-      auto move = Move{2,4};
+    SUBCASE("Do Move") {
+      auto move = Move{2, 4};
       graph.do_move(move);
       REQUIRE(graph[move.source].field == Field::EMPTY);
       REQUIRE(graph[move.destination].field == Field::RED);
-      move = {8,6};
+      move = {8, 6};
       graph.do_move(move);
       REQUIRE(graph[move.source].field == Field::EMPTY);
       REQUIRE(graph[move.destination].field == Field::BLUE);
+      /*
       SUBCASE("Do invalid move"){
         graph.print();
         auto move = Move{1,4};
@@ -92,7 +99,7 @@ TEST_CASE("Graph") {
         REQUIRE(graph.invalid_move(move));
         move = Move{8,2};
         REQUIRE(graph.invalid_move(move));
-      }
+      }*/
     }
   }
 }

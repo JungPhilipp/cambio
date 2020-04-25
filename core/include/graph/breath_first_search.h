@@ -6,25 +6,25 @@
 namespace graph {
 template <class Predicate>
 [[nodiscard]] auto breath_first_search(Graph const &graph,
-                                       Node const &start_node,
+                                       size_t start_index,
+                                       size_t end_index,
                                        Predicate predicate) noexcept
-    -> std::vector<Node> {
-  auto result = std::vector<Node>();
+    -> bool {
   auto nodes = std::queue<Node>(); // Change to vector?
   auto visited_nodes = std::set<Node>();
-  nodes.push(start_node);
+  nodes.push(graph[start_index]);
 
   while (not nodes.empty()) {
     auto const node = nodes.front();
+    if (node.index == end_index)
+      return true;
     nodes.pop();
     visited_nodes.insert(node);
     auto const neighbors = graph.node_neighbors(node);
-    if (predicate(node, neighbors))
-      result.push_back(node);
     for (auto const &neighbor : neighbors)
-      if (not visited_nodes.contains(neighbor))
+      if (not visited_nodes.contains(neighbor) and predicate(neighbor))
         nodes.push(neighbor);
   }
-  return result;
+  return false;
 }
 } // namespace graph

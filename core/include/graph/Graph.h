@@ -60,7 +60,7 @@ public:
     auto const &neighbor_indices = adj_matrix[node.index];
     std::transform(begin(neighbor_indices), end(neighbor_indices),
                    std::back_inserter(result),
-                   [](auto node_index) { return Node(node_index); });
+                   [this](auto node_index) { return operator[](node_index); });
     return result;
   }
 
