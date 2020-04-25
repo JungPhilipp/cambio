@@ -4,40 +4,29 @@
 #include <cassert>
 #include <queue>
 #include <tuple>
+#include <graph/Graph.h>
 
-[[nodiscard]] std::vector<Move> get_possible_moves(Board const & board, Move last_move) noexcept{
-    auto moves = std::vector<Move>{};
-    for(auto position = Index(0); position < board.size(); position++){
-        if (board[position] == EMPTY)
-            continue;
-        if (number_of_empty_neigbors(board, position) == 0)
-            continue;
-        for (auto destination = Index(0); destination < board.size(); destination++){
-            auto move = Move{position, destination};
-            if (destination == position || move.is_inverse(last_move))
-                continue;
-            if (number_of_empty_neigbors(board, destination) == 1){ // TODO add search for these moves
-                moves.push_back(move);
-                move.print();
-            }
-        }
-    }
-    return moves;
-}
+using namespace graph;
+using namespace move;
 
-
-[[nodiscard]] bool play(Board const& initial_board) noexcept {
-    auto boards = std::queue<std::tuple<Board,size_t,Move>>();
+[[nodiscard]] bool play(Graph const& initial_board, Graph const& finish_board) noexcept {
+    auto boards = std::queue<std::tuple<Graph,size_t,Move>>();
     boards.emplace(initial_board, 0, Move{0,0});
     while (not boards.empty()){
         auto [current_board, current_move, last_move] = boards.front();
         boards.pop();
-        if (is_finished(current_board, current_move))
-        {}
+        if (current_board == finish_board){
+          current_board.print();
+          return true;
+        }
         std::cout << "Current Move: " << current_move << std::endl;
-        auto possible_moves = get_possible_moves(current_board, last_move);
+        auto possible_moves = current_board.possible_moves();
         for(auto move: possible_moves){
-            boards.emplace(do_move(current_board, move), current_move + 1, move);
+            if (move.is_inverse(last_move))
+              continue;
+            auto copy_board = current_board;
+            copy_board.do_move(move);
+            boards.emplace(copy_board, current_move + 1, move);
         }
     }
     return false;
@@ -46,7 +35,12 @@
 
 int main()
 {
-    auto found = play(initial_board());
+    auto adj_matrix = graph::example_01::adj_matrix();
+    auto pos_red = graph::example_01::initial_positions_red();
+    auto pos_blue = graph::example_01::initial_positions_blue();
+    auto intial_board = graph::Graph(adj_matrix, pos_red, pos_blue);
+    auto finished_board = graph::Graph(adj_matrix, pos_blue, pos_red);
+    auto found = play(intial_board, finished_board);
     std::cout << "Found at least 1 soluton: " << found << std::endl;
     return 0;
 }
