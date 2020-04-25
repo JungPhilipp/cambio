@@ -37,31 +37,36 @@ TEST_CASE("Graph") {
     auto always_true = [](Node const &node) {
       return true;
     };
-    REQUIRE(breath_first_search(graph, 0, 11, always_true));
-    REQUIRE(breath_first_search(graph, 6, 9, always_true));
+    REQUIRE(graph.breath_first_search( 0, 11, always_true));
+    REQUIRE(graph.breath_first_search( 6, 9, always_true));
     auto no_jumps = [](Node const &node) {
       return node.field == Field::EMPTY;
     };
-    REQUIRE(breath_first_search(graph, 2, 6, no_jumps));
-    REQUIRE(breath_first_search(graph, 6, 7, no_jumps));
-    REQUIRE(breath_first_search(graph, 7, 4, no_jumps));
-    REQUIRE_FALSE(breath_first_search(graph, 4, 8, no_jumps));
-    REQUIRE_FALSE(breath_first_search(graph, 6, 10, no_jumps));
-    REQUIRE_FALSE(breath_first_search(graph, 1, 5, no_jumps));
-    REQUIRE_FALSE(breath_first_search(graph, 6, 3, no_jumps));
-    REQUIRE_FALSE(breath_first_search(graph, 0, 11, no_jumps));
+    REQUIRE(graph.breath_first_search( 2, 6, no_jumps));
+    REQUIRE(graph.breath_first_search( 6, 7, no_jumps));
+    REQUIRE(graph.breath_first_search( 7, 4, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 4, 8, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 6, 10, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 1, 5, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 6, 3, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 0, 11, no_jumps));
     graph.do_move({2,5});
-    REQUIRE_FALSE(breath_first_search(graph, 1, 5, no_jumps));
-    REQUIRE_FALSE(breath_first_search(graph, 1, 7, no_jumps));
-    REQUIRE_FALSE(breath_first_search(graph, 1, 6, no_jumps));
-    REQUIRE_FALSE(breath_first_search(graph, 8, 6, no_jumps));
-    REQUIRE_FALSE(breath_first_search(graph, 8, 5, no_jumps));
-    REQUIRE(breath_first_search(graph, 1, 4, no_jumps));
-    REQUIRE(breath_first_search(graph, 3, 4, no_jumps));
-    REQUIRE(breath_first_search(graph, 5, 4, no_jumps));
-    REQUIRE(breath_first_search(graph, 5, 6, no_jumps));
-    REQUIRE(breath_first_search(graph, 5, 7, no_jumps));
-    REQUIRE(breath_first_search(graph, 8, 7, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 1, 5, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 1, 7, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 1, 6, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 8, 6, no_jumps));
+    REQUIRE_FALSE(graph.breath_first_search( 8, 5, no_jumps));
+    REQUIRE(graph.breath_first_search( 1, 4, no_jumps));
+    REQUIRE(graph.breath_first_search( 3, 4, no_jumps));
+    REQUIRE(graph.breath_first_search( 5, 4, no_jumps));
+    REQUIRE(graph.breath_first_search( 5, 6, no_jumps));
+    REQUIRE(graph.breath_first_search( 5, 7, no_jumps));
+    REQUIRE(graph.breath_first_search( 8, 7, no_jumps));
+  }
+
+  SUBCASE("Possible moves"){
+    auto possible_moves = graph.possible_moves();
+    REQUIRE(possible_moves == std::vector<Move>{{2,4}, {2,5}, {2,6}, {2,7}, {8,4}, {8,5}, {8,6}, {8,7}});
   }
 
   SUBCASE("Print") {
@@ -100,7 +105,7 @@ TEST_CASE("Graph") {
       graph.do_move(move);
       REQUIRE(graph[move.source].field == Field::EMPTY);
       REQUIRE(graph[move.destination].field == Field::BLUE);
-      /*
+
       SUBCASE("Do invalid move"){
         graph.print();
         auto move = Move{1,4};
@@ -109,7 +114,7 @@ TEST_CASE("Graph") {
         REQUIRE(graph.invalid_move(move));
         move = Move{8,2};
         REQUIRE(graph.invalid_move(move));
-      }*/
+      }
     }
   }
 }

@@ -1,7 +1,9 @@
 #pragma once
 #include <cassert>
 #include <type_traits>
+#include <queue>
 #include <vector>
+#include <set>
 #include <iostream>
 #include <string>
 #include <optional>
@@ -64,12 +66,40 @@ public:
     return result;
   }
 
-  [[nodiscard]] auto invalid_move(move::Move const& move) noexcept -> std::optional<std::string>{
+  [[nodiscard]] auto invalid_move(move::Move const& move) const noexcept -> std::optional<std::string>{
     if(nodes[move.source].field == Field::EMPTY)
         return {"ILLEGAL MOVE: The source field is empty"};
     if(nodes[move.destination].field != Field::EMPTY)
       return {"ILLEGAL MOVE: The destination field is emtpy"};
+    auto no_jumps = [](Node const &node) {
+      return node.field == Field::EMPTY;
+    };
+    if(not breath_first_search(move.source, move.destination, no_jumps))
+      return {"ILLEGAL MOVE: Unreachable destination"};
     return {};
+  }
+
+  template <class Predicate>
+  [[nodiscard]] auto breath_first_search(size_t start_index,
+                                         size_t end_index,
+                                         Predicate predicate) const noexcept
+  -> bool {
+    auto nodes = std::queue<Node>(); // Change to vector?
+    auto visited_nodes = std::set<Node>();
+    nodes.push(operator[](start_index));
+
+    while (not nodes.empty()) {
+      auto const node = nodes.front();
+      if (node.index == end_index)
+        return true;
+      nodes.pop();
+      visited_nodes.insert(node);
+      auto const neighbors = node_neighbors(node);
+      for (auto const &neighbor : neighbors)
+        if (not visited_nodes.contains(neighbor) and predicate(neighbor))
+          nodes.push(neighbor);
+    }
+    return false;
   }
 
   auto do_move(move::Move const& move) noexcept -> void{
@@ -77,6 +107,20 @@ public:
     assert(not invalid);
     nodes[move.destination].field = nodes[move.source].field;
     nodes[move.source].field = Field::EMPTY;
+  }
+
+  [[nodiscard]] auto possible_moves() const noexcept -> std::vector<move::Move>{
+    auto moves = std::vector<move::Move>{};
+    for (size_t source = 0; source< size(); source++){
+      for (size_t destination = 0; destination < size(); destination++){
+        if (source == destination)
+          continue;
+        auto move = move::Move{source, destination};
+        if (not invalid_move(move))
+          moves.push_back(move);
+      }
+    }
+    return moves;
   }
 
   /// Extremely basic, only for current test problem
